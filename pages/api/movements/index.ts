@@ -47,8 +47,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
       return res.status(201).json(created);
-    } catch (e: any) {
-      return res.status(500).json({ error: e.message || "Error interno" });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      return res.status(500).json({ error: message || "Error interno" });
     }
   }
 
