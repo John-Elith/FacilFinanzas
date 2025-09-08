@@ -12,8 +12,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const item = await prisma.movement.findUnique({ where: { id } });
       if (!item) return res.status(404).json({ error: "No encontrado" });
       return res.status(200).json(item);
-    } catch (e: any) {
-      return res.status(500).json({ error: e.message || "Error interno" });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      return res.status(500).json({ error: message || "Error interno" });
     }
   }
 
@@ -29,8 +30,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
       return res.status(200).json(updated);
-    } catch (e: any) {
-      return res.status(500).json({ error: e.message || "Error interno" });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      return res.status(500).json({ error: message || "Error interno" });
     }
   }
 
@@ -38,8 +40,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       await prisma.movement.delete({ where: { id } });
       return res.status(204).end();
-    } catch (e: any) {
-      return res.status(500).json({ error: e.message || "Error interno" });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      return res.status(500).json({ error: message || "Error interno" });
     }
   }
 

@@ -10,8 +10,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         take: 100,
       });
       return res.status(200).json({ items, total: items.length });
-    } catch (e: any) {
-      return res.status(500).json({ error: e.message || "Error interno" });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      return res.status(500).json({ error: message || "Error interno" });
     }
   }
   res.setHeader("Allow", ["GET"]);

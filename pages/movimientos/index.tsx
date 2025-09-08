@@ -23,8 +23,8 @@ export default function MovimientosPage() {
         const res = await fetch("/api/movements");
         const data = await res.json();
         setItems(data.items || []);
-      } catch (e) {
-        console.error(e);
+      } catch (error: unknown) {
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -53,8 +53,9 @@ export default function MovimientosPage() {
       const created: Movement = await res.json();
       setItems((prev) => [created, ...prev]);
       setForm({ amount: "", concept: "", date: new Date().toISOString().slice(0, 10) });
-    } catch (e: any) {
-      setError(e.message || "Error desconocido");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      setError(message || "Error desconocido");
     }
   };
 
