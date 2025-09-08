@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelos base para Better-Auth (User, Session, Account, Verification)
+// + Extensiones para la app: Role y Movement
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id             String     @id
+  name           String     @map("nombre")
+  email          String     @unique @map("correo")
+  emailVerified  Boolean    @map("correo_verificado")
+  image          String?    @map("imagen")
+  createdAt      DateTime   @default(now()) @map("creado_en")
+  updatedAt      DateTime   @updatedAt @map("actualizado_en")
+
+  // Relaciones auth
+  sessions       Session[]
+  accounts       Account[]
+
+  // RBAC
+  role           Role       @default(ADMIN) @map("rol")
+
+  // Relaciones negocio
+  movements      Movement[]
+
+  @@map("usuario")
+}
+
+model Session {
+  id         String   @id
+  expiresAt  DateTime @map("expira_en")
+  token      String   @unique
+  createdAt  DateTime @default(now()) @map("creado_en")
+  updatedAt  DateTime @updatedAt @map("actualizado_en")
+  ipAddress  String?  @map("ip")
+  userAgent  String?  @map("agente_usuario")
+  userId     String   @map("usuario_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sesion")
+}
+
+model Account {
+  id                        String   @id
+  accountId                 String   @map("cuenta_id")
+  providerId                String   @map("proveedor_id")
+  userId                    String   @map("usuario_id")
+  user                      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken               String?  @map("token_acceso")
+  refreshToken              String?  @map("token_refresco")
+  idToken                   String?  @map("token_id")
+  accessTokenExpiresAt      DateTime? @map("token_acceso_expira_en")
+  refreshTokenExpiresAt     DateTime? @map("token_refresco_expira_en")
+  scope                     String?  @map("alcance")
+  password                  String?  @map("contrasena")
+  createdAt                 DateTime @default(now()) @map("creado_en")
+  updatedAt                 DateTime @updatedAt @map("actualizado_en")
+
+  @@map("cuenta")
+}
+
+model Verification {
+  id         String   @id
+  identifier String   @map("identificador")
+  value      String   @map("valor")
+  expiresAt  DateTime @map("expira_en")
+  createdAt  DateTime? @default(now()) @map("creado_en")
+  updatedAt  DateTime? @updatedAt @map("actualizado_en")
+
+  @@map("verificacion")
+}
+
+model Movement {
+  id        String   @id @default(uuid())
+  amount    Decimal  @db.Decimal(18, 2) @map("monto")
+  concept   String   @map("concepto")
+  date      DateTime @map("fecha")
+  userId    String   @map("usuario_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("creado_en")
+  updatedAt DateTime @updatedAt @map("actualizado_en")
+
+  @@map("movimiento")
+}
