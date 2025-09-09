@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import "zod"; // asegura que Vercel incluya la dependencia en runtime
 import { toNextJsHandler } from "better-auth/next-js";
 import { auth } from "../../../lib/auth";
 
