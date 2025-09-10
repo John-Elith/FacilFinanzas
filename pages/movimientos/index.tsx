@@ -136,9 +136,9 @@ export default function MovimientosPage() {
                       items.map((m) => (
                         <tr key={m.id} className="hover:bg-gray-50">
                           <td className="p-2 border">{m.concept}</td>
-                          <td className="p-2 border">${'{'}typeof m.amount === "number" ? m.amount.toFixed(2) : m.amount{'}'}</td>
+                          <td className="p-2 border">${typeof m.amount === "number" ? m.amount.toFixed(2) : m.amount}</td>
                           <td className="p-2 border">{new Date(m.date).toLocaleDateString()}</td>
-                          <td className="p-2 border">{m.userId || "-"}</td>
+                          <td className="p-2 border">{m.user?.name || m.user?.email || "Admin Temporal"}</td>
                         </tr>
                       ))
                     )}
