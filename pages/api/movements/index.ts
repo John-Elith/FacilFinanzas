@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             id: crypto.randomUUID(),
             name: "Admin Temporal",
             email: `admin_${Date.now()}@example.com`,
-            emailVerified: true,
+            emailVerified: new Date(),
             role: "ADMIN",
           },
         });
