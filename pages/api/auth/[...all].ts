@@ -1,20 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import "zod"; // asegura que Vercel incluya la dependencia en runtime
-import { toNextJsHandler } from "better-auth/next-js";
 import { auth } from "../../../lib/auth";
 
-// Adaptador para Pages API: reutilizamos el handler del App Router
-const { GET, POST } = toNextJsHandler(auth);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    // Crear un Request compatible con Web API desde NextApiRequest
+    const url = new URL(req.url!, `https://${req.headers.host}`);
+    const webRequest = new Request(url, {
+      method: req.method!,
+      headers: new Headers(req.headers as Record<string, string>),
+      body: req.method !== "GET" && req.method !== "HEAD" ? JSON.stringify(req.body) : undefined,
+    });
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === "GET") {
-    // @ts-expect-error: adaptando tipos de App Router a Pages API
-    return GET(req, res);
+    // Llamar directamente al handler de Better Auth
+    const response = await auth.handler(webRequest);
+    
+    // Convertir la Response de Web API a NextApiResponse
+    const body = await response.text();
+    
+    // Copiar headers
+    response.headers.forEach((value, key) => {
+      res.setHeader(key, value);
+    });
+    
+    return res.status(response.status).send(body);
+  } catch (error: unknown) {
+    console.error("Auth handler error:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    return res.status(500).json({ error: message });
   }
-  if (req.method === "POST") {
-    // @ts-expect-error: adaptando tipos de App Router a Pages API
-    return POST(req, res);
-  }
-  res.setHeader("Allow", ["GET", "POST"]);
-  return res.status(405).end("Method Not Allowed");
 }
