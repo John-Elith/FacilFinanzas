@@ -23,68 +23,63 @@ enum Role {
 }
 
 model User {
-  id             String     @id
-  name           String     @map("nombre")
-  email          String     @unique @map("correo")
-  emailVerified  Boolean    @map("correo_verificado")
-  image          String?    @map("imagen")
-  createdAt      DateTime   @default(now()) @map("creado_en")
-  updatedAt      DateTime   @updatedAt @map("actualizado_en")
+  id            String    @id @default(cuid())
+  name          String?   @map("nombre")
+  email         String    @unique @map("correo")
+  emailVerified DateTime? @map("correo_verificado")
+  image         String?   @map("imagen")
+  createdAt     DateTime  @default(now()) @map("creado_en")
+  updatedAt     DateTime  @updatedAt @map("actualizado_en")
 
   // Relaciones auth
-  sessions       Session[]
-  accounts       Account[]
+  sessions      Session[]
+  accounts      Account[]
 
   // RBAC
-  role           Role       @default(ADMIN) @map("rol")
+  role          Role      @default(ADMIN) @map("rol")
 
   // Relaciones negocio
-  movements      Movement[]
+  movements     Movement[]
 
   @@map("usuario")
 }
 
 model Session {
-  id         String   @id
-  expiresAt  DateTime @map("expira_en")
-  token      String   @unique
-  createdAt  DateTime @default(now()) @map("creado_en")
-  updatedAt  DateTime @updatedAt @map("actualizado_en")
-  ipAddress  String?  @map("ip")
-  userAgent  String?  @map("agente_usuario")
-  userId     String   @map("usuario_id")
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("token")
+  userId       String   @map("usuario_id")
+  expires      DateTime @map("expira_en")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sesion")
 }
 
 model Account {
-  id                        String   @id
-  accountId                 String   @map("cuenta_id")
-  providerId                String   @map("proveedor_id")
-  userId                    String   @map("usuario_id")
-  user                      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken               String?  @map("token_acceso")
-  refreshToken              String?  @map("token_refresco")
-  idToken                   String?  @map("token_id")
-  accessTokenExpiresAt      DateTime? @map("token_acceso_expira_en")
-  refreshTokenExpiresAt     DateTime? @map("token_refresco_expira_en")
-  scope                     String?  @map("alcance")
-  password                  String?  @map("contrasena")
-  createdAt                 DateTime @default(now()) @map("creado_en")
-  updatedAt                 DateTime @updatedAt @map("actualizado_en")
+  id                String  @id @default(cuid())
+  userId            String  @map("usuario_id")
+  type              String
+  provider          String  @map("proveedor")
+  providerAccountId String  @map("cuenta_id_proveedor")
+  refresh_token     String? @map("token_refresco") @db.Text
+  access_token      String? @map("token_acceso") @db.Text
+  expires_at        Int?    @map("expira_en")
+  token_type        String? @map("tipo_token")
+  scope             String? @map("alcance")
+  id_token          String? @map("token_id") @db.Text
+  session_state     String? @map("estado_sesion")
 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
   @@map("cuenta")
 }
 
-model Verification {
-  id         String   @id
+model VerificationToken {
   identifier String   @map("identificador")
-  value      String   @map("valor")
-  expiresAt  DateTime @map("expira_en")
-  createdAt  DateTime? @default(now()) @map("creado_en")
-  updatedAt  DateTime? @updatedAt @map("actualizado_en")
+  token      String   @map("token")
+  expires    DateTime @map("expira_en")
 
+  @@unique([identifier, token])
   @@map("verificacion")
 }
 
