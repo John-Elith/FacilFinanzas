@@ -44,7 +44,7 @@ export default function MovimientosPage() {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || `Error ${res.status}`);
       }
-      const created: Movement = await res.json();
+      const created: MovementWithUser = await res.json();
       setItems((prev) => [created, ...prev]);
       setForm({ amount: "", concept: "", date: new Date().toISOString().slice(0, 10) });
     } catch (error: unknown) {
