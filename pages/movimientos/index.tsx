@@ -1,16 +1,10 @@
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { MovementWithUser } from "../../types";
 
-type Movement = {
-  id: string;
-  amount: number;
-  concept: string;
-  date: string; // ISO
-  userId?: string;
-};
 
 export default function MovimientosPage() {
-  const [items, setItems] = useState<Movement[]>([]);
+  const [items, setItems] = useState<MovementWithUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ amount: "", concept: "", date: new Date().toISOString().slice(0, 10) });
   const [error, setError] = useState<string | null>(null);
