@@ -6,7 +6,7 @@ export default function Home() {
       <header className="border-b">
         <div className="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">FacilFinanzas</h1>
-          <span className="text-sm text-gray-500">Demo inicial</span>
+          <span className="text-sm text-gray-500">Prueba técnica</span>
         </div>
       </header>
 
@@ -15,8 +15,7 @@ export default function Home() {
           <h2 className="text-xl font-semibold">Menú principal</h2>
           <p className="text-gray-600 mt-1">
             Navega a las secciones principales del sistema. (Los accesos de
-            Usuarios y Reportes serán visibles solo para administradores cuando
-            activemos autenticación y RBAC.)
+            Usuarios y Reportes serán visibles solo para administradores)
           </p>
         </section>
 
@@ -52,7 +51,7 @@ export default function Home() {
           <h2 className="text-lg font-semibold">Estado</h2>
           <ul className="list-disc list-inside text-gray-700 mt-2 space-y-1">
             <li>Proyecto Next.js (pages router) ya creado.</li>
-            <li>Pendiente: instalar dependencias (Prisma, Better Auth, etc.).</li>
+            <li>Pendiente: instalar dependencias (Prisma, Better Auth, etc.) ya creada.</li>
             <li>Pendiente: autenticación, RBAC y API.</li>
           </ul>
         </section>
@@ -60,7 +59,7 @@ export default function Home() {
 
       <footer className="border-t">
         <div className="max-w-5xl mx-auto px-6 py-6 text-sm text-gray-500">
-          © {new Date().getFullYear()} FacilFinanzas — Prueba técnica
+          © {new Date().getFullYear()} FacilFinanzas — Prueba técnica - John Elith
         </div>
       </footer>
     </div>
